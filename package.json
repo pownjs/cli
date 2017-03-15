@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "description": "Pownage guaranteed",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+    "pown": "./index.js"
   },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pownjs/pown-cli.git"
@@ -15,14 +16,14 @@
     "framework"
   ],
   "author": "pdp <pdp@gnucitizen.org>",
+  "contributors": [],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/pownjs/pown-cli/issues"
   },
   "homepage": "https://github.com/pownjs/pown-cli#readme",
   "dependencies": {
-    "pown-app": "0.0.0",
-    "pown-credits": "0.0.0",
-    "pown-shell": "0.0.0"
+    "pown-modules": "^0.2.0",
+    "yargs": "^7.0.2"
   }
 }
