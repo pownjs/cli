@@ -19,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/pownjs/pown-cli/issues"
   },
-  "homepage": "https://github.com/pownjs/pown-cli#readme"
+  "homepage": "https://github.com/pownjs/pown-cli#readme",
+  "dependencies": {
+    "pown-app": "0.0.0",
+    "pown-credits": "0.0.0",
+    "pown-shell": "0.0.0"
+  }
 }
