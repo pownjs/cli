@@ -36,24 +36,12 @@ const boot = (modules) => {
     main(commands)
 }
 
-if (process.env.POWN_ROOT) {
-    pownModules.list(process.env.POWN_ROOT, (err, modules) => {
-        if (err) {
-            console.error(err.message || err)
+pownModules.list((err, modules) => {
+    if (err) {
+        console.error(err.message || err)
 
-            return
-        }
+        return
+    }
 
-        boot(modules)
-    })
-} else {
-    pownModules.list((err, modules) => {
-        if (err) {
-            console.error(err.message || err)
-
-            return
-        }
-
-        boot(modules)
-    })
-}
+    boot(modules)
+})
