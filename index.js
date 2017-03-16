@@ -15,7 +15,7 @@ const main = (commands) => {
         }
     })
 
-    y = y.demandCommand(1, 'You need at least one command before moving on').help()
+    y = y.demandCommand(1, 'You need to specify a command').help()
 
     y.argv
 }
@@ -36,7 +36,17 @@ const boot = (modules) => {
     main(commands)
 }
 
-if (require.main === module) {
+if (process.env.POWN_ROOT) {
+    pownModules.list(process.env.POWN_ROOT, (err, modules) => {
+        if (err) {
+            console.error(err.message || err)
+
+            return
+        }
+
+        boot(modules)
+    })
+} else {
     pownModules.list((err, modules) => {
         if (err) {
             console.error(err.message || err)
