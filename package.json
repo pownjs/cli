@@ -6,7 +6,9 @@
   "bin": {
     "pown": "./index.js"
   },
-  "scripts": {},
+  "scripts": {
+    "cli": "POWN_ROOT=. node index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pownjs/pown-cli.git"
