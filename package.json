@@ -4,7 +4,7 @@
   "description": "Pownage guaranteed",
   "main": "lib/index.js",
   "bin": {
-    "pown": "bin/index.js"
+    "pown": "bin/pown.js"
   },
   "scripts": {
     "pown": "POWN_ROOT=. node bin/pown.js"
