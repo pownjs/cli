@@ -1,13 +1,13 @@
 {
-  "name": "pown-cli",
+  "name": "@pown/cli",
   "version": "0.4.0",
   "description": "Pownage guaranteed",
-  "main": "index.js",
+  "main": "lib/index.js",
   "bin": {
-    "pown": "./index.js"
+    "pown": "bin/index.js"
   },
   "scripts": {
-    "cli": "POWN_ROOT=. node index.js"
+    "pown": "POWN_ROOT=. node bin/pown.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/pownjs/pown-cli#readme",
   "dependencies": {
-    "pown-modules": "^0.4.0",
-    "yargs": "^7.0.2"
+    "@pown/modules": "^0.5.0",
+    "yargs": "^12.0.5"
   }
 }

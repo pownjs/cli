@@ -1,16 +1,18 @@
-# pown-cli  [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/pownjs/Lobby)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/pownjs.svg?logo=twitter)](https://twitter.com/pownjs)
 
-> The main command line interface to Pown.js
+# Pown CLI
+
+The main command line interface to Pown.js
 
 ## Quickstart
 
-From the same directory as your project's package.json, install this module with the following command:
+Install this module from the root of your project:
 
 ```sh
-$ npm install pown-cli --save
+$ npm install @pown/cli --save
 ```
 
-Once that's done, you can invoke pown like this:
+Once done, invoke pown like this:
 
 ```sh
 $ ./node_modules/.bin/pown

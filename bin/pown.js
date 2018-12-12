@@ -2,7 +2,7 @@
 
 const path = require('path')
 const yargs = require('yargs')
-const pownModules = require('pown-modules')
+const pownModules = require('@pown/modules')
 
 const main = (modules, commands) => {
     let y = yargs.usage(`Usage: $0 [options] <command> [command options]`)
