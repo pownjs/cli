@@ -2,22 +2,27 @@
 
 const path = require('path')
 const yargs = require('yargs')
-const pownModules = require('@pown/modules')
+const modules = require('@pown/modules')
 
-const main = (modules, commands) => {
+const main = (m, c) => {
     let y = yargs.usage(`Usage: $0 [options] <command> [command options]`)
 
-    y = y.command({
-        command: 'modules',
-        describe: 'List loadable modules',
+    y.context = {
+        yargs: y,
+        modules: m,
+        commands: c
+    }
 
-        builder: {
-        },
+    const commandModules = require('../lib/commands/modules')
+    const commandText = require('../lib/commands/text')
 
-        handler: (argv) => {
-            Object.keys(modules).forEach(module => console.log(module, '-', module.desc || module.describe || module.description || ''))
-        }
-    })
+    if (commandModules.yargs) {
+        y = y.command(commandModules.yargs)
+    }
+
+    if (commandText.yargs) {
+        y = y.command(commandText.yargs)
+    }
 
     y = y.options('modules', {
         alias: 'm',
@@ -25,7 +30,29 @@ const main = (modules, commands) => {
         describe: 'Load modules'
     })
 
-    commands.forEach(command => {
+    y = y.options('text', {
+        alias: 't',
+        type: 'boolean',
+        describe: 'Start in text mode'
+    })
+
+    y = y.middleware((argv) => {
+        argv.context = {
+            yargs: y,
+            modules: m,
+            commands: c
+        }
+
+        if (argv.modules) {
+            commandModules.argv(argv)
+        }
+
+        if (argv.text) {
+            commandText.argv(argv)
+        }
+    })
+
+    c.forEach((command) => {
         const module = require(command)
 
         if (module.yargs) {
@@ -33,30 +60,14 @@ const main = (modules, commands) => {
         }
     })
 
-    y = y.demandCommand(1, 'You need to specify a command').help()
+    y = y.alias('v', 'version')
 
-    const argv = y.argv
+    y = y.demandCommand(1, 'You need to specify a command')
 
-    if (argv.modules) {
-        argv.modules.split(',').forEach((name) => {
-            name = name.trim()
+    y = y.help()
+    y = y.alias('h', 'help')
 
-            if (name === '*') {
-                Object.values(modules).forEach(module => require(module))
-            } else {
-                const module = modules[name]
-
-                if (module) {
-                    require(module)
-                } else {
-                    y = y.epilog(`Unrecognized module ${name}.`)
-                    y = y.showHelp()
-
-                    process.exit(1)
-                }
-            }
-        })
-    }
+    y.argv
 }
 
 const boot = (modules) => {
@@ -80,12 +91,11 @@ const boot = (modules) => {
     main(loadableModules, loadableCommands)
 }
 
-pownModules.list((err, modules) => {
+modules.list((err, modules) => {
     if (err) {
-        console.error(err.message || err)
-
-        return
+        console.error(err)
     }
-
-    boot(modules)
+    else {
+        boot(modules)
+    }
 })
