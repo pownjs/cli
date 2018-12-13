@@ -4,10 +4,10 @@
   "description": "Pownage guaranteed",
   "main": "lib/index.js",
   "bin": {
-    "pown": "bin/pown.js"
+    "pown-cli": "bin/cli.js"
   },
   "scripts": {
-    "pown": "POWN_ROOT=. node bin/pown.js",
+    "cli": "POWN_ROOT=. node bin/cli.js",
     "test": "mocha"
   },
   "repository": {
