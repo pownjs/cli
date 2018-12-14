@@ -83,12 +83,8 @@ const main = ({loadableModules, loadableCommands}) => {
         }
     })
 
-    y = y.alias('v', 'version')
-
-    y = y.demandCommand(1, 'You need to specify a command')
-
     y = y.help()
-    y = y.alias('h', 'help')
+    y = y.demandCommand(1, 'You need to specify a command')
 
     y.argv
 }
