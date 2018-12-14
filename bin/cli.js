@@ -4,24 +4,13 @@ const path = require('path')
 const yargs = require('yargs')
 const modules = require('@pown/modules')
 
-const main = (m, c) => {
+const main = ({loadableModules, loadableCommands}) => {
     let y = yargs.usage(`Usage: $0 [options] <command> [command options]`)
 
     y.context = {
         yargs: y,
-        modules: m,
-        commands: c
-    }
-
-    const commandModules = require('../lib/commands/modules')
-    const commandText = require('../lib/commands/text')
-
-    if (commandModules.yargs) {
-        y = y.command(commandModules.yargs)
-    }
-
-    if (commandText.yargs) {
-        y = y.command(commandText.yargs)
+        modules: loadableModules,
+        commands: loadableCommands
     }
 
     y = y.options('modules', {
@@ -30,29 +19,59 @@ const main = (m, c) => {
         describe: 'Load modules'
     })
 
-    y = y.options('text', {
-        alias: 't',
-        type: 'boolean',
-        describe: 'Start in text mode'
-    })
-
     y = y.middleware((argv) => {
         argv.context = {
             yargs: y,
-            modules: m,
-            commands: c
+            modules: loadableModules,
+            commands: loadableCommands
         }
 
         if (argv.modules) {
-            commandModules.argv(argv)
-        }
+            argv.modules.split(',').forEach((name) => {
+                name = name.trim()
 
-        if (argv.text) {
-            commandText.argv(argv)
+                if (name === '*') {
+                    Object.values(modules).forEach(module => require(module))
+                }
+                else {
+                    const module = modules[name]
+
+                    if (module) {
+                        require(module)
+                    }
+                    else {
+                        yargs
+                            .epilog(`Unrecognized module ${name}.`)
+                            .showHelp()
+
+                        process.exit(1)
+                    }
+                }
+            })
         }
     })
 
-    c.forEach((command) => {
+    y = y.command({
+        command: 'modules',
+        describe: 'List loadable modules',
+
+        handler: (argv) => {
+            const { context } = argv
+            const { yargs, modules } = context
+
+            const list = Object.keys(modules).map((module) => [module, module.desc || module.describe || module.description || ''])
+
+            if (list.length) {
+                list.forEach(([name, description]) => console.log(name, '-', description))
+            } else {
+                console.warn('No modules available.')
+
+                process.exit(1)
+            }
+        }
+    })
+
+    loadableCommands.forEach((command) => {
         const module = require(command)
 
         if (module.yargs) {
@@ -88,7 +107,7 @@ const boot = (modules) => {
         }
     })
 
-    main(loadableModules, loadableCommands)
+    main({loadableModules, loadableCommands})
 }
 
 modules.list((err, modules) => {
