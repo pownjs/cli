@@ -59,12 +59,16 @@ const main = ({loadableModules, loadableCommands}) => {
             const { context } = argv
             const { yargs, modules } = context
 
+            const { Logger } = require('../lib/logger')
+
+            const logger = new Logger(argv)
+
             const list = Object.keys(modules).map((module) => [module, module.desc || module.describe || module.description || ''])
 
             if (list.length) {
-                list.forEach(([name, description]) => console.log(name, '-', description))
+                list.forEach(([name, description]) => logger.verbose(name, '-', description))
             } else {
-                console.warn('No modules available.')
+                logger.warn('No modules available.')
 
                 process.exit(1)
             }
