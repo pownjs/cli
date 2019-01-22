@@ -13,6 +13,8 @@ const main = ({loadableModules, loadableCommands}) => {
         commands: loadableCommands
     }
 
+    y = y.wrap(null)
+
     y = y.options('modules', {
         alias: 'm',
         type: 'string',
