@@ -19,6 +19,12 @@ const main = ({loadableModules, loadableCommands}) => {
         describe: 'Load modules'
     })
 
+    y = y.options('debug', {
+        alias: 'd',
+        type: 'boolean',
+        describe: 'Debug mode'
+    })
+
     y = y.middleware((argv) => {
         argv.context = {
             yargs: y,
