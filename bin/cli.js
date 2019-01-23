@@ -4,7 +4,9 @@ const path = require('path')
 const yargs = require('yargs')
 const modules = require('@pown/modules')
 
-const main = ({loadableModules, loadableCommands}) => {
+const colors = require('../lib/colors')
+
+const main = ({ loadableModules, loadableCommands }) => {
     let y = yargs.usage(`Usage: $0 [options] <command> [command options]`)
 
     y.context = {
@@ -19,12 +21,6 @@ const main = ({loadableModules, loadableCommands}) => {
         alias: 'm',
         type: 'string',
         describe: 'Load modules'
-    })
-
-    y = y.options('debug', {
-        alias: 'd',
-        type: 'boolean',
-        describe: 'Debug mode'
     })
 
     y = y.middleware((argv) => {
@@ -59,24 +55,45 @@ const main = ({loadableModules, loadableCommands}) => {
         }
     })
 
+    y = y.options('debug', {
+        alias: 'd',
+        type: 'boolean',
+        describe: 'Debug mode'
+    })
+
+    y = y.middleware((argv) => {
+        const log = console.log.bind(console)
+
+        console.info = function(...args) {
+            log(colors.green('*'), ...args)
+        }
+
+        console.warn = function(...args) {
+            log(colors.yellow('!'), ...args)
+        }
+
+        console.error = function(...args) {
+            log(colors.red('x'), ...(argv.debug ? args : args.map((error) => {
+                return error && error.message ? error.message : error
+            })))
+        }
+    })
+
     y = y.command({
         command: 'modules',
         describe: 'List loadable modules',
 
         handler: (argv) => {
             const { context } = argv
-            const { yargs, modules } = context
-
-            const { Logger } = require('../lib/logger')
-
-            const logger = new Logger(argv)
+            const { modules } = context
 
             const list = Object.keys(modules).map((module) => [module, module.desc || module.describe || module.description || ''])
 
             if (list.length) {
-                list.forEach(([name, description]) => logger.verbose(name, '-', description))
-            } else {
-                logger.warn('No modules available.')
+                list.forEach(([name, description]) => console.info(name, '-', description))
+            }
+            else {
+                console.warn('No modules available.')
 
                 process.exit(1)
             }
@@ -115,7 +132,7 @@ const boot = (modules) => {
         }
     })
 
-    main({loadableModules, loadableCommands})
+    main({ loadableModules, loadableCommands })
 }
 
 modules.list((err, modules) => {
