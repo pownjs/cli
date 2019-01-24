@@ -17,46 +17,15 @@ const main = ({ loadableModules, loadableCommands }) => {
 
     y = y.wrap(null)
 
-    y = y.options('modules', {
-        alias: 'm',
-        type: 'string',
-        describe: 'Load modules'
-    })
-
     y = y.middleware((argv) => {
         argv.context = {
             yargs: y,
             modules: loadableModules,
             commands: loadableCommands
         }
-
-        if (argv.modules) {
-            argv.modules.split(',').forEach((name) => {
-                name = name.trim()
-
-                if (name === '*') {
-                    Object.values(modules).forEach(module => require(module))
-                }
-                else {
-                    const module = modules[name]
-
-                    if (module) {
-                        require(module)
-                    }
-                    else {
-                        yargs
-                            .epilog(`Unrecognized module ${name}.`)
-                            .showHelp()
-
-                        process.exit(1)
-                    }
-                }
-            })
-        }
     })
 
     y = y.options('debug', {
-        alias: 'd',
         type: 'boolean',
         describe: 'Debug mode'
     })
