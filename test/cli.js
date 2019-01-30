@@ -10,20 +10,35 @@ const sleep = (ms) => {
 }
 
 describe('cli', () => {
-    it('#execute', async() => {
-        const inlineCommands = [
-            {
-                yargs: {
-                    command: 'test',
-                    describe: 'test',
-
-                    handler: async() => {
-                        await sleep(1000)
+    describe('#execute', () => {
+        it('handles undefined handlers', async() => {
+            const inlineCommands = [
+                {
+                    yargs: {
+                        command: 'test',
+                        describe: 'test',
                     }
                 }
-            }
-        ]
+            ]
 
-        await cli.execute('test', { inlineCommands })
-    }).timeout(2000)
+            await cli.execute('test', { inlineCommands })
+        })
+
+        it('execs async', async() => {
+            const inlineCommands = [
+                {
+                    yargs: {
+                        command: 'test',
+                        describe: 'test',
+
+                        handler: async() => {
+                            await sleep(1000)
+                        }
+                    }
+                }
+            ]
+
+            await cli.execute('test', { inlineCommands })
+        }).timeout(2000)
+    })
 })
