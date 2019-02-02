@@ -32,20 +32,50 @@ const boot = async({ loadableModules, loadableCommands }) => {
         })))
     }
 
-    console.table = function(data, properties) {
+    console.table = function(data, properties = null, options = {}) {
+        const { span = true, wrap = true } = options
+
         const head = properties || Array.from(new Set(data.reduce((a, v) => {
             return a.concat(Object.keys(v))
         }, [])))
 
+        const screenWidth = Math.max(78, Math.floor(process.stdout.columns * 0.8))
+        const colWidth = Math.floor(screenWidth / head.length) - 1
+
         const table = new Table({
             head: head,
-            wordWrap: true,
-            colWidths: Array(head.length).fill(Math.floor(Math.max(78, process.stdout.columns / 1.2)/head.length))
+            wordWrap: wrap,
+            colWidths: Array(head.length).fill(colWidth)
         })
 
-        data.forEach((entry) => {
-            table.push(head.map((n) => entry[n]))
-        })
+        if (span) {
+            data.forEach((entry) => {
+                entry = head.map((n) => entry[n] ? entry[n].toString() : '')
+
+                for (let i = entry.length - 1, j = entry.length - 1; i >= 0; i--) {
+                    if (entry[i]) {
+                        const span = j - i + 1
+
+                        if (span > 1) {
+                            entry[i] = { content: entry[i], colSpan: span }
+                        }
+
+                        j = i - 1
+                    }
+                }
+            
+                entry = entry.filter(i => i)
+
+                table.push(entry)
+            })
+        }
+        else {
+            data.forEach((entry) => {
+                entry = head.map((n) => entry[n] ? entry[n].toString() : '')
+
+                table.push(entry)
+            })
+        }
 
         log(table.toString())
     }
