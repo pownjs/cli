@@ -38,7 +38,9 @@ const boot = async({ loadableModules, loadableCommands }) => {
         }, [])))
 
         const table = new Table({
-            head: head
+            head: head,
+            wordWrap: true,
+            colWidths: Array(head.length).fill(Math.floor(Math.max(78, process.stdout.columns / 1.2)/head.length))
         })
 
         data.forEach((entry) => {
