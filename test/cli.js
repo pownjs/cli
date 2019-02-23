@@ -1,3 +1,4 @@
+const assert = require('assert')
 const { setTimeout } = require('timers')
 
 const cli = require('../lib/cli')
@@ -9,6 +10,20 @@ const sleep = (ms) => {
 }
 
 describe('cli', () => {
+    describe('#parse', () => {
+        it('parses command', () => {
+            assert.deepEqual(cli.parse('a b c'), ['a', 'b', 'c'])
+        })
+
+        it('parses command with envs', () => {
+            assert.deepEqual(cli.parse(`a $B`, {}), ['a'])
+            assert.deepEqual(cli.parse(`a $B`, { B: 'b' }), ['a', 'b'])
+            assert.deepEqual(cli.parse(`a $B '$C'`, { B: 'b' }), ['a', 'b', '$C'])
+            assert.deepEqual(cli.parse(`a $B '$C' "d $E"`, { B: 'b', E: 'e' }), ['a', 'b', '$C', 'd e'])
+            assert.deepEqual(cli.parse(`a $B '$C' "d $E" $F`, { B: 'b', E: 'e', F: 'f g h' }), ['a', 'b', '$C', 'd e', 'f', 'g', 'h'])
+        })
+    })
+
     describe('#execute', () => {
         it('handles undefined handlers', async() => {
             const inlineCommands = [{
