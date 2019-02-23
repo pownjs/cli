@@ -15,6 +15,10 @@ describe('cli', () => {
             assert.deepEqual(cli.parse('a b c'), ['a', 'b', 'c'])
         })
 
+        it('parsesed command returns strings', () => {
+            assert.equal(typeof(cli.parse(`a 1`)[1]), 'string')
+        })
+
         it('parses command with envs', () => {
             assert.deepEqual(cli.parse(`a $B`, {}), ['a'])
             assert.deepEqual(cli.parse(`a $B`, { B: 'b' }), ['a', 'b'])
