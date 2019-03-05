@@ -40,7 +40,9 @@ const boot = async({ loadableModules, loadableCommands }) => {
         }, [])))
 
         const screenWidth = Math.max(78, Math.floor(process.stdout.columns * 0.8))
-        const colWidth = Math.floor(screenWidth / head.length) - 1
+
+        const colSize = Math.floor(screenWidth / head.length) - 1
+        const colWidth = 2.0 * Math.round(colSize / 2.0)
 
         const table = new Table({
             head: head,
@@ -63,7 +65,7 @@ const boot = async({ loadableModules, loadableCommands }) => {
                         j = i - 1
                     }
                 }
-            
+
                 entry = entry.filter(i => i)
 
                 table.push(entry)
