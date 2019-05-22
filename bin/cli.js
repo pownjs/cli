@@ -9,6 +9,13 @@ const { execute } = require('../lib/cli')
 const boot = async({ loadableModules, loadableCommands }) => {
     const log = console.log.bind(console)
 
+    console.debug = function(...args) {
+        // NOTE: should we handle multiline
+        // NOTE: will effect yargs usage output
+
+        log(colors.green('%'), ...args)
+    }
+
     console.info = function(...args) {
         // NOTE: should we handle multiline
         // NOTE: will effect yargs usage output
