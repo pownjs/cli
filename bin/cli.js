@@ -7,7 +7,7 @@ const { Table } = require('../lib/table')
 const { execute } = require('../lib/cli')
 
 const boot = async({ loadableModules, loadableCommands }) => {
-    const log = console.log.bind(console)
+    const log = console.warn.bind(console)
 
     console.debug = function(...args) {
         // NOTE: should we handle multiline
