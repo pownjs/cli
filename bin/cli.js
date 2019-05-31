@@ -40,7 +40,7 @@ const boot = async({ loadableModules, loadableCommands }) => {
     }
 
     console.table = function(data, properties = null, options = {}) {
-        switch (process.env.POWN_TABLE_OUTPUT_FORMAT) {
+        switch (process.env.POWN_CONSOLE_TABLE_OUTPUT_FORMAT) {
             case 'raw':
                 log(data)
 
@@ -53,7 +53,7 @@ const boot = async({ loadableModules, loadableCommands }) => {
         }
 
         if (!Array.isArray(data)) {
-            data = [data]
+            data = Object.entries(data).map(([key, value]) => ({ key, value }))
         }
 
         const { span = true, wrap = true } = options
