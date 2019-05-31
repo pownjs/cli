@@ -40,6 +40,22 @@ const boot = async({ loadableModules, loadableCommands }) => {
     }
 
     console.table = function(data, properties = null, options = {}) {
+        switch (process.env.POWN_TABLE_OUTPUT_FORMAT) {
+            case 'raw':
+                log(data)
+
+                return
+
+            case 'json':
+                log(JSON.stringify(data, '', '  '))
+
+                return
+        }
+
+        if (!Array.isArray(data)) {
+            data = [data]
+        }
+
         const { span = true, wrap = true } = options
 
         const head = properties || Array.from(new Set(data.reduce((a, v) => {
