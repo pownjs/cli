@@ -42,12 +42,12 @@ const boot = async({ loadableModules, loadableCommands }) => {
     console.table = function(data, properties = null, options = {}) {
         switch (process.env.POWN_CONSOLE_TABLE_OUTPUT_FORMAT) {
             case 'raw':
-                log(data)
+                console.log(data)
 
                 return
 
             case 'json':
-                log(JSON.stringify(data, '', '  '))
+                console.log(JSON.stringify(data, '', '  '))
 
                 return
         }
