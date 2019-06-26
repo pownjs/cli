@@ -13,7 +13,9 @@ const boot = async({ loadableModules, loadableCommands }) => {
         // NOTE: should we handle multiline
         // NOTE: will effect yargs usage output
 
-        log(colors.green('%'), ...args)
+        if (process.env.POWN_DEBUG) {
+            log(colors.green('%'), ...args)
+        }
     }
 
     console.info = function(...args) {
@@ -34,7 +36,7 @@ const boot = async({ loadableModules, loadableCommands }) => {
         // NOTE: should we handle multiline
         // NOTE: will effect yargs usage output
 
-        log(colors.red('x'), ...(process.env.DEBUG ? args : args.map((error) => {
+        log(colors.red('x'), ...(process.env.POWN_DEBUG ? args : args.map((error) => {
             return error && error.message ? error.message : error
         })))
     }
