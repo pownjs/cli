@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const modules = require('@pown/modules')
+const { extract } = require('@pown/modules')
 
 const colors = require('../lib/colors')
 const { Table } = require('../lib/table')
@@ -110,7 +110,7 @@ const boot = async({ loadableModules, loadableCommands }) => {
     await execute(process.argv.slice(2), { loadableModules, loadableCommands })
 }
 
-modules.extract(async(err, modules) => {
+extract(async(err, modules) => {
     if (err) {
         console.error(err)
     }
