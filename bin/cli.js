@@ -1,120 +1,124 @@
 #!/usr/bin/env node
 
+const process = require('process')
 const { extract } = require('@pown/modules')
 
+const Table = require('../lib/table')
 const colors = require('../lib/colors')
-const { Table } = require('../lib/table')
 const { execute } = require('../lib/cli')
 
-const boot = async({ loadableModules, loadableCommands }) => {
-    const log = console.warn.bind(console)
+const boot = async() => {
+    const { loadableModules, loadableCommands } = await extract()
 
-    console.debug = function(...args) {
-        // NOTE: should we handle multiline
-        // NOTE: will effect yargs usage output
-
-        if (process.env.POWN_DEBUG) {
-            log(colors.green('%'), ...args)
-        }
+    const consoleDef = {
+        debug: ['%', 'green'],
+        info: ['*', 'green'],
+        warn: ['!', 'yellow'],
+        error: ['x', 'red']
     }
 
-    console.info = function(...args) {
-        // NOTE: should we handle multiline
-        // NOTE: will effect yargs usage output
+    switch (process.env.POWN_CONSOLE_OUTPUT_FORMAT) {
+        case 'raw':
+            break
 
-        log(colors.green('*'), ...args)
+        case 'json':
+            Object.keys(consoleDef).forEach((type) => {
+                console[type] = ((fn) => (...args) => {
+                    fn(JSON.stringify({ type, message: (args.length > 1 ? args : args[0]) }))
+                })(console[type])
+            })
+
+            break
+
+        default:
+            Object.entries(consoleDef).forEach(([type, [symbol, color]]) => {
+                console[type] = ((fn) => (...args) => {
+                    fn(colors[color](symbol), ...args)
+                })(console[type])
+            })
     }
 
-    console.warn = function(...args) {
-        // NOTE: should we handle multiline
-        // NOTE: will effect yargs usage output
-
-        log(colors.yellow('!'), ...args)
+    if (process.env.POWN_DEBUG) {
+        console.error = ((fn) => (...args) => {
+            fn(...args.map(error => error && error.message ? error.message : error))
+        })(console.error)
+    }
+    else {
+        console.debug = () => {}
     }
 
-    console.error = function(...args) {
-        // NOTE: should we handle multiline
-        // NOTE: will effect yargs usage output
+    switch (process.env.POWN_CONSOLE_TABLE_OUTPUT_FORMAT || process.env.POWN_CONSOLE_OUTPUT_FORMAT) {
+        case 'raw':
+            console.table = (data) => console.log(data)
 
-        log(colors.red('x'), ...(process.env.POWN_DEBUG ? args : args.map((error) => {
-            return error && error.message ? error.message : error
-        })))
-    }
+            break
 
-    console.table = function(data, properties = null, options = {}) {
-        switch (process.env.POWN_CONSOLE_TABLE_OUTPUT_FORMAT) {
-            case 'raw':
-                console.log(data)
+        case 'json':
+            console.table = (data) => console.log(JSON.stringify(data))
 
-                return
+            break
 
-            case 'json':
-                console.log(JSON.stringify(data, '', '  '))
-
-                return
-        }
-
-        if (!Array.isArray(data)) {
-            data = Object.entries(data).map(([key, value]) => ({ key, value }))
-        }
-
-        const { span = true, wrap = true } = options
-
-        const head = properties || Array.from(new Set(data.reduce((a, v) => {
-            return a.concat(Object.keys(v))
-        }, [])))
-
-        const screenWidth = Math.max(78, Math.floor(process.stdout.columns * 0.8))
-
-        const colSize = Math.floor(screenWidth / head.length) - 1
-        const colWidth = 2.0 * Math.round(colSize / 2.0)
-
-        const table = new Table({
-            head: head,
-            wordWrap: wrap,
-            colWidths: Array(head.length).fill(colWidth)
-        })
-
-        if (span) {
-            data.forEach((entry) => {
-                entry = head.map((n) => entry[n] ? entry[n].toString() : '')
-
-                for (let i = entry.length - 1, j = entry.length - 1; i >= 0; i--) {
-                    if (entry[i]) {
-                        const span = j - i + 1
-
-                        if (span > 1) {
-                            entry[i] = { content: entry[i], colSpan: span }
-                        }
-
-                        j = i - 1
-                    }
+        default:
+            console.table = (data, properties = null, options = {}) => {
+                if (!Array.isArray(data)) {
+                    data = Object.entries(data).map(([key, value]) => ({ key, value }))
                 }
 
-                entry = entry.filter(i => i)
+                const { span = true, wrap = true } = options
 
-                table.push(entry)
-            })
-        }
-        else {
-            data.forEach((entry) => {
-                entry = head.map((n) => entry[n] ? entry[n].toString() : '')
+                const head = properties || Array.from(new Set(data.reduce((a, v) => {
+                    return a.concat(Object.keys(v))
+                }, [])))
 
-                table.push(entry)
-            })
-        }
+                const screenWidth = Math.max(78, Math.floor(process.stdout.columns * 0.8))
 
-        log(table.toString())
+                const colSize = Math.floor(screenWidth / head.length) - 1
+                const colWidth = 2.0 * Math.round(colSize / 2.0)
+
+                const table = new Table({
+                    head: head,
+                    wordWrap: wrap,
+                    colWidths: Array(head.length).fill(colWidth)
+                })
+
+                if (span) {
+                    data.forEach((entry) => {
+                        entry = head.map((n) => entry[n] ? entry[n].toString() : '')
+
+                        for (let i = entry.length - 1, j = entry.length - 1; i >= 0; i--) {
+                            if (entry[i]) {
+                                const span = j - i + 1
+
+                                if (span > 1) {
+                                    entry[i] = { content: entry[i], colSpan: span }
+                                }
+
+                                j = i - 1
+                            }
+                        }
+
+                        entry = entry.filter(i => i)
+
+                        table.push(entry)
+                    })
+                }
+                else {
+                    data.forEach((entry) => {
+                        entry = head.map((n) => entry[n] ? entry[n].toString() : '')
+
+                        table.push(entry)
+                    })
+                }
+
+                console.log(table.toString())
+            }
     }
 
     await execute(process.argv.slice(2), { loadableModules, loadableCommands })
 }
 
-extract(async(err, modules) => {
-    if (err) {
-        console.error(err)
-    }
-    else {
-        await boot(modules)
-    }
+boot().catch((error) => {
+    console.error(error)
+
+    process.exit(1)
 })
