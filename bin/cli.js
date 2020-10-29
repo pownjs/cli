@@ -24,7 +24,7 @@ const boot = async() => {
         case 'json':
             Object.keys(consoleDef).forEach((type) => {
                 console[type] = ((fn) => (...args) => {
-                    fn(JSON.stringify({ type, message: (args.length > 1 ? args : args[0]) }))
+                    fn(JSON.stringify({ type, data: (args.length > 1 ? args : args[0]) }))
                 })(console[type])
             })
 
@@ -38,13 +38,19 @@ const boot = async() => {
             })
     }
 
-    if (process.env.POWN_DEBUG) {
-        console.error = ((fn) => (...args) => {
-            fn(...args.map(error => error && error.message ? error.message : error))
-        })(console.error)
+    if (process.env.POWN_DEBUG || process.env.POWN_DEBUG_XXL) {
+        if (!process.env.POWN_DEBUG_XXL) {
+            console.debug = ((fn) => (...args) => {
+                fn(...args.map(data => data && Buffer.isBuffer(data) ? data.slice(0, 512) : data))
+            })(console.debug)
+        }
     }
     else {
         console.debug = () => {}
+
+        console.error = ((fn) => (...args) => {
+            fn(...args.map(error => error && error.message ? error.message : error))
+        })(console.error)
     }
 
     switch (process.env.POWN_CONSOLE_TABLE_OUTPUT_FORMAT || process.env.POWN_CONSOLE_OUTPUT_FORMAT) {
@@ -54,7 +60,7 @@ const boot = async() => {
             break
 
         case 'json':
-            console.table = (data) => console.log(JSON.stringify(data))
+            console.table = (data) => console.log(JSON.stringify({ type: 'table', data: data }))
 
             break
 
