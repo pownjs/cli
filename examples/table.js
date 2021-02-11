@@ -1,9 +1,15 @@
 const { Table } = require('../lib/table')
 
-const table = new Table()
+const t1 = new Table()
 
-table.push([1, 2, 3, 4, 5])
-table.push([1, 2, 3, 4, 5])
-table.push([1, 2, 3, 4, 5])
+t1.push([1, 2, 3, 4, 5])
+t1.push([1, 2, 3, 4, 5])
+t1.push([1, 2, 3, 4, 5])
 
-console.log(table.toString())
+console.log(t1.toString())
+
+const t2 = new Table()
+
+t2.push({ 'a': 'b', 'c': 'd' })
+
+console.log(t2.toString())
