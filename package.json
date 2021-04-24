@@ -8,6 +8,8 @@
   },
   "scripts": {
     "cli": "POWN_ROOT=. node bin/cli.js",
+    "usage": "POWN_ROOT=. node bin/cli.js --help",
+    "build": "true",
     "test": "mocha"
   },
   "repository": {
@@ -34,5 +36,8 @@
     "inquirer": "^6.5.2",
     "wordwrap": "^1.0.0",
     "yargs": "^13.3.2"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2"
   }
 }
