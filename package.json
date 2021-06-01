@@ -27,6 +27,9 @@
     "url": "https://github.com/pownjs/pown-cli/issues"
   },
   "homepage": "https://github.com/pownjs/pown-cli#readme",
+  "devDependencies": {
+    "mocha": "^8.4.0"
+  },
   "dependencies": {
     "@pown/modules": "^2.10.0",
     "are-we-there-yet": "^1.1.5",
@@ -36,8 +39,5 @@
     "inquirer": "^6.5.2",
     "wordwrap": "^1.0.0",
     "yargs": "^13.3.2"
-  },
-  "devDependencies": {
-    "mocha": "^8.4.0"
   }
 }
