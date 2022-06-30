@@ -10,7 +10,7 @@
     "cli": "POWN_ROOT=. node bin/cli.js",
     "usage": "POWN_ROOT=. node bin/cli.js --help",
     "build": "true",
-    "test": "mocha"
+    "test": "NODE_ENV=test npx mocha"
   },
   "repository": {
     "type": "git",
@@ -27,9 +27,6 @@
     "url": "https://github.com/pownjs/pown-cli/issues"
   },
   "homepage": "https://github.com/pownjs/pown-cli#readme",
-  "devDependencies": {
-    "mocha": "^8.4.0"
-  },
   "dependencies": {
     "@pown/modules": "^2.10.0",
     "are-we-there-yet": "^1.1.5",
