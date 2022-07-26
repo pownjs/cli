@@ -6,7 +6,7 @@ const { extract } = require('@pown/modules')
 const { execute } = require('../lib/cli')
 const { init: initConsole } = require('../lib/console')
 
-const boot = async() => {
+const boot = async () => {
     const { loadableModules, loadableCommands } = await extract()
 
     initConsole()
@@ -14,7 +14,7 @@ const boot = async() => {
     await execute(process.argv.slice(2), { loadableModules, loadableCommands })
 }
 
-boot().catch((error) => {
+boot().then(() => process.exit(0)).catch((error) => {
     console.error(error)
 
     process.exit(error.code || 1)
