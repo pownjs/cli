@@ -34,6 +34,7 @@
     "cli-progress": "^2.1.1",
     "cli-table3": "^0.5.1",
     "inquirer": "^6.5.2",
+    "shell-quote": "^1.7.4",
     "wordwrap": "^1.0.0",
     "yargs": "^17.5.1"
   }
